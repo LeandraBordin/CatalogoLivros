@@ -8,10 +8,9 @@ import com.leandra.LivroService.business.dto.Response.LivroResponseDTO;
 import com.leandra.LivroService.infrastructure.entity.Livro;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/livros")
@@ -22,5 +21,18 @@ public class LivroController {
     @PostMapping
     public ResponseEntity<LivroResponseDTO> salvaLivro(@RequestBody LivroRequestDTO livroDTO){
         return ResponseEntity.ok(livroService.salvaLivro(livroDTO));
+    }
+    @GetMapping("/{isbn}")
+    public ResponseEntity<LivroResponseDTO> buscaLivroPorIsbn(@PathVariable String isbn){
+        return ResponseEntity.ok(livroService.buscaLivroPorIsbn(isbn));
+    }
+    @GetMapping("/autor/{autor}")
+    public ResponseEntity<List<LivroResponseDTO>> buscaLivroPorAutor(@PathVariable String autor){
+        return ResponseEntity.ok(livroService.buscaLivroPorAutor(autor));
+    }
+
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<List<LivroResponseDTO>> buscaLivroPorcategoria(@PathVariable String categoria){
+        return ResponseEntity.ok(livroService.buscaLivroPorCategoria(categoria));
     }
 }
