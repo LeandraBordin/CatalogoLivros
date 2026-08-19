@@ -24,6 +24,7 @@ public class LivroService {
     private final LivroConverter livroConverter;
     private final CategoriaRepository categoriaRepository;
     private final AutorRepository autorRepository;
+
     public LivroResponseDTO salvaLivro(LivroRequestDTO livroDTO){
         try{
             if (livroRepository.existsByIsbn(livroDTO.getIsbn())){
@@ -44,7 +45,10 @@ public class LivroService {
             throw new RuntimeException("Erro ao salvar livro:"+e.getMessage());
         }
     }
-
+    public List<LivroResponseDTO> listarLivros(){
+        List<Livro> livros = livroRepository.findAll();
+        return livros.stream().map(livroConverter::paraLivroDTO).toList();
+    }
     public LivroResponseDTO buscaLivroPorIsbn(String isbn){
         try{
            return livroRepository.findByIsbn(isbn).map(livroConverter::paraLivroDTO)
@@ -53,24 +57,35 @@ public class LivroService {
             throw new RuntimeException("Livro não encontrado"+e.getCause());
         }
     }
+    public List<LivroResponseDTO> buscaLivrosComFiltros(String nome, String autor, String categoria){
+        return livroRepository.buscaLivrosComFiltros(nome,autor,categoria).stream().map(livroConverter::paraLivroDTO).toList();
+    }
+    public LivroResponseDTO atualizarLivro(String isbn, LivroRequestDTO livroDTO) {
+        Livro livro = livroRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new EntityNotFoundException("Livro não encontrado com ISBN: " + isbn));
 
-    public List<LivroResponseDTO> buscaLivroPorAutor(String nomeAutor){
-        try{
-            Autor autor = autorRepository.findByNome(nomeAutor).orElseThrow(() ->
-                new EntityNotFoundException("Livro não encontrado para o autor"+nomeAutor));
-            return livroRepository.findByAutoresId(autor.getId()).stream().map(livroConverter::paraLivroDTO).toList();
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Livro não encontrado"+e.getCause());
+        if (livroDTO.getIsbn() != null && !livro.getIsbn().equals(livroDTO.getIsbn())) {
+            if (livroRepository.existsByIsbn(livroDTO.getIsbn())) {
+                throw new RuntimeException("Livro com ISBN " + livroDTO.getIsbn() + " já cadastrado");
+            }
         }
+        livro = livroConverter.updateLivro(livroDTO, livro);
+
+        if (livroDTO.getCategoriasIds() != null) {
+            List<Categoria> categorias = categoriaRepository.findAllById(livroDTO.getCategoriasIds());
+            livro.setCategorias(categorias);
+        }
+        if (livroDTO.getAutoresIds() != null) {
+            List<Autor> autores = autorRepository.findAllById(livroDTO.getAutoresIds());
+            livro.setAutores(autores);
+        }
+
+        if (livroDTO.getQuantidadeTotal() != null) {
+            livro.setQuantidadeTotal(livroDTO.getQuantidadeTotal());
+        }
+
+        Livro livroAtualizado = livroRepository.save(livro);
+        return livroConverter.paraLivroDTO(livroAtualizado);
     }
 
-    public List<LivroResponseDTO> buscaLivroPorCategoria(String categoria){
-        try {
-            Categoria categoriaFilme = categoriaRepository.findByNome(categoria)
-                    .orElseThrow(() -> new EntityNotFoundException("Livro não encontrado para a categoria"+categoria));
-            return livroRepository.findByCategoriasId(categoriaFilme.getId()).stream().map(livroConverter::paraLivroDTO).toList();
-        }catch (RuntimeException e) {
-            throw new RuntimeException("Livro não encontrado"+e.getCause());
-        }
-    }
 }

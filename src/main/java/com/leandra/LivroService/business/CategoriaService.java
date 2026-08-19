@@ -8,6 +8,8 @@ import com.leandra.LivroService.infrastructure.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoriaService {
@@ -25,5 +27,10 @@ public class CategoriaService {
             throw new RuntimeException("Erro ao salvar Categoria"+e.getMessage());
         }
 
+    }
+
+    public List<CategoriaResponseDTO> listarCategorias(){
+        List<Categoria> categorias = categoriaRepository.findAll();
+        return categorias.stream().map(categoriaConverter::paraCategoriaResponseDTO).toList();
     }
 }
