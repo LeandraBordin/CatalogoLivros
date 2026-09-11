@@ -2,10 +2,8 @@ package com.leandra.LivroService.controller;
 
 
 import com.leandra.LivroService.business.LivroService;
-import com.leandra.LivroService.business.dto.LivroDTO;
 import com.leandra.LivroService.business.dto.Request.LivroRequestDTO;
 import com.leandra.LivroService.business.dto.Response.LivroResponseDTO;
-import com.leandra.LivroService.infrastructure.entity.Livro;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +38,16 @@ public class LivroController {
     @PutMapping("/{isbn}")
     public ResponseEntity<LivroResponseDTO> atualizarLivro(@PathVariable String isbn, @RequestBody LivroRequestDTO livroRequestDTO){
         return ResponseEntity.ok(livroService.atualizarLivro(isbn,livroRequestDTO));
+    }
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<Void> deletaLivroPorId(@PathVariable Long id){
+        livroService.deletaLivroPorId(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/isbn/{isbn}")
+    public ResponseEntity<Void> deletaLivroPorIsbn(@PathVariable String isbn){
+        livroService.deletaLivroPorIsbn(isbn);
+        return ResponseEntity.noContent().build();
     }
 }

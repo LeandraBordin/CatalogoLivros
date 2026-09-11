@@ -3,7 +3,6 @@ package com.leandra.LivroService.controller;
 import com.leandra.LivroService.business.AutorService;
 import com.leandra.LivroService.business.dto.Request.AutorRequestDTO;
 import com.leandra.LivroService.business.dto.Response.AutorResponseDTO;
-import com.leandra.LivroService.infrastructure.entity.Autor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +28,7 @@ public class AutorController {
         return ResponseEntity.ok(autorService.buscaAutorPorNome(nome));
     }
     @GetMapping("/{id}")
-    public ResponseEntity<AutorResponseDTO> buscaAutorPorId(@RequestParam Long id){
+    public ResponseEntity<AutorResponseDTO> buscaAutorPorId(@PathVariable Long id){
         return ResponseEntity.ok(autorService.buscaAutorPorId(id));
     }
     @PutMapping("/{id}")

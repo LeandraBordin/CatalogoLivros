@@ -22,4 +22,11 @@ public class CategoriaConverter {
                 .nome(categoriaRequestDTO.getNome())
                 .build();
     }
+
+    public Categoria updateCategoria(CategoriaRequestDTO categoriaRequestDTO, Categoria entity){
+        return Categoria.builder()
+                .id(entity.getId())
+                .nome( categoriaRequestDTO != null ? categoriaRequestDTO.getNome() : entity.getNome())
+                .build();
+    }
 }

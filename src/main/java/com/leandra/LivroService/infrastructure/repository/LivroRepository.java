@@ -27,4 +27,6 @@ public interface LivroRepository extends JpaRepository<Livro,Long> {
             @Param("nome") String nome,
             @Param("autor") String autor,
             @Param("categoria") String categoria);
+
+    void deleteByIsbn(String isbn);
 }
