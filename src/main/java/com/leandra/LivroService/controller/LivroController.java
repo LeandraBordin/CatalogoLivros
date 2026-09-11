@@ -2,10 +2,8 @@ package com.leandra.LivroService.controller;
 
 
 import com.leandra.LivroService.business.LivroService;
-import com.leandra.LivroService.business.dto.LivroDTO;
 import com.leandra.LivroService.business.dto.Request.LivroRequestDTO;
 import com.leandra.LivroService.business.dto.Response.LivroResponseDTO;
-import com.leandra.LivroService.infrastructure.entity.Livro;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +20,34 @@ public class LivroController {
     public ResponseEntity<LivroResponseDTO> salvaLivro(@RequestBody LivroRequestDTO livroDTO){
         return ResponseEntity.ok(livroService.salvaLivro(livroDTO));
     }
+    @GetMapping
+    public ResponseEntity<List<LivroResponseDTO>> listarLivros(){
+        return ResponseEntity.ok(livroService.listarLivros());
+    }
     @GetMapping("/{isbn}")
     public ResponseEntity<LivroResponseDTO> buscaLivroPorIsbn(@PathVariable String isbn){
         return ResponseEntity.ok(livroService.buscaLivroPorIsbn(isbn));
     }
-    @GetMapping("/autor/{autor}")
-    public ResponseEntity<List<LivroResponseDTO>> buscaLivroPorAutor(@PathVariable String autor){
-        return ResponseEntity.ok(livroService.buscaLivroPorAutor(autor));
+    @GetMapping("/busca")
+    public ResponseEntity<List<LivroResponseDTO>> buscaLivrosComFiltros(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String autor,
+            @RequestParam(required = false) String categoria){
+        return ResponseEntity.ok(livroService.buscaLivrosComFiltros(nome,autor,categoria));
+    }
+    @PutMapping("/{isbn}")
+    public ResponseEntity<LivroResponseDTO> atualizarLivro(@PathVariable String isbn, @RequestBody LivroRequestDTO livroRequestDTO){
+        return ResponseEntity.ok(livroService.atualizarLivro(isbn,livroRequestDTO));
+    }
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<Void> deletaLivroPorId(@PathVariable Long id){
+        livroService.deletaLivroPorId(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<LivroResponseDTO>> buscaLivroPorcategoria(@PathVariable String categoria){
-        return ResponseEntity.ok(livroService.buscaLivroPorCategoria(categoria));
+    @DeleteMapping("/isbn/{isbn}")
+    public ResponseEntity<Void> deletaLivroPorIsbn(@PathVariable String isbn){
+        livroService.deletaLivroPorIsbn(isbn);
+        return ResponseEntity.noContent().build();
     }
 }
