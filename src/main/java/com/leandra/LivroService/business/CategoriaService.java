@@ -4,7 +4,8 @@ import com.leandra.LivroService.business.converter.CategoriaConverter;
 import com.leandra.LivroService.business.dto.Request.CategoriaRequestDTO;
 import com.leandra.LivroService.business.dto.Response.CategoriaResponseDTO;
 import com.leandra.LivroService.infrastructure.entity.Categoria;
-import com.leandra.LivroService.infrastructure.exceptions.ResouceNotFoundException;
+import com.leandra.LivroService.infrastructure.exceptions.ConflictException;
+import com.leandra.LivroService.infrastructure.exceptions.ResourceNotFoundException;
 import com.leandra.LivroService.infrastructure.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,13 @@ public class CategoriaService {
 
     public CategoriaResponseDTO buscaCategoriaPorId(Long id) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Erro ao buscar categoria por ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Erro ao buscar categoria por ID: " + id));
         return categoriaConverter.paraCategoriaResponseDTO(categoria);
     }
     public CategoriaResponseDTO salvaCategoria(CategoriaRequestDTO categoriaRequestDTO){
         try{
             if (categoriaRepository.existsByNome(categoriaRequestDTO.getNome())){
-                throw new RuntimeException("Categoria já cadastrada");
+                throw new ConflictException("Categoria já cadastrada");
             }
             Categoria categoria = categoriaConverter.paraCategoria(categoriaRequestDTO);
             return categoriaConverter.paraCategoriaResponseDTO(categoriaRepository.save(categoria));
@@ -49,7 +50,7 @@ public class CategoriaService {
 
     public CategoriaResponseDTO atualizaCategoria(Long id, CategoriaRequestDTO categoriaRequestDTO) {
         Categoria categoria = categoriaRepository.findById(id)
-                .orElseThrow(() -> new ResouceNotFoundException("Categoria não encontrada com ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria não encontrada com ID: " + id));
 
         Categoria updatedCategoria = categoriaConverter.updateCategoria(categoriaRequestDTO, categoria);
         categoriaRepository.save(updatedCategoria);

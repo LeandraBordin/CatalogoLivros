@@ -6,7 +6,7 @@ import com.leandra.LivroService.business.dto.Response.LivroResponseDTO;
 import com.leandra.LivroService.infrastructure.entity.Autor;
 import com.leandra.LivroService.infrastructure.entity.Categoria;
 import com.leandra.LivroService.infrastructure.entity.Livro;
-import com.leandra.LivroService.infrastructure.exceptions.ResouceNotFoundException;
+import com.leandra.LivroService.infrastructure.exceptions.ResourceNotFoundException;
 import com.leandra.LivroService.infrastructure.repository.AutorRepository;
 import com.leandra.LivroService.infrastructure.repository.CategoriaRepository;
 import com.leandra.LivroService.infrastructure.repository.LivroRepository;
@@ -91,16 +91,16 @@ public class LivroService {
     public void deletaLivroPorId(Long id){
        try{
            livroRepository.deleteById(id);
-       } catch (ResouceNotFoundException e){
-           throw new ResouceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+id+"");
+       } catch (ResourceNotFoundException e){
+           throw new ResourceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+id+"");
        }
     }
     @Transactional
     public void deletaLivroPorIsbn(String isbn){
        try{
            livroRepository.deleteByIsbn(isbn);
-       } catch (ResouceNotFoundException e){
-           throw new ResouceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+isbn+"");
+       } catch (ResourceNotFoundException e){
+           throw new ResourceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+isbn+"");
        }
     }
 }
