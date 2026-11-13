@@ -1,4 +1,4 @@
-package com.leandra.biblioteca.infrastructure.security;
+package com.leandra.LivroService.infrastructure.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,7 +28,6 @@ public class SecurityConfig {
 
     private final JwtUtil jwtUtil;
 
-    // Origem(ns) do front-end React, separadas por vírgula (ex.: http://localhost:5173)
     @Value("${cors.allowed-origins}")
     private List<String> allowedOrigins;
 
@@ -40,28 +40,37 @@ public class SecurityConfig {
         JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil);
 
         http
-            .cors(Customizer.withDefaults())            // usa o bean corsConfigurationSource()
-            .csrf(AbstractHttpConfigurer::disable)      // API stateless com Bearer token
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/error").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // preflight do CORS
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // RBAC: PUBLICO só lê; BIBLIOTECARIO lê/cria/edita; ADMIN também exclui
-                .requestMatchers(HttpMethod.GET, "/**")
-                    .hasAnyRole("PUBLICO", "BIBLIOTECARIO", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/**")
-                    .hasAnyRole("BIBLIOTECARIO", "ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/**")
-                    .hasAnyRole("BIBLIOTECARIO", "ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/**")
-                    .hasRole("ADMIN")
+                        .requestMatchers(
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
 
-                .anyRequest().denyAll()                 // PATCH e demais métodos: bloqueados
-            )
-            // Sem token/token inválido -> 401 (autenticado sem permissão continua 403)
-            .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+                        // 2. SUAS REGRAS DE NEGÓCIO
+                        .requestMatchers(HttpMethod.GET, "/livros/**", "/categorias/**", "/autores/**")
+                        .hasAnyRole("PUBLICO", "BIBLIOTECARIO", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/**")
+                        .hasAnyRole("BIBLIOTECARIO", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/**")
+                        .hasAnyRole("BIBLIOTECARIO", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/**")
+                        .hasRole("ADMIN")
+
+                        .anyRequest().denyAll()
+                )
+                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -78,4 +87,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
 }
