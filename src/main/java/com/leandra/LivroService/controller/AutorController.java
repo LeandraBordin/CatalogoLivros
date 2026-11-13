@@ -67,6 +67,7 @@ public class AutorController {
     @Operation(summary = "Deleta autor por id", description = "Remove permanentemente o autor correspondente ao id informado.")
     @ApiResponse(responseCode = "204", description = "Autor deletado com sucesso!")
     @ApiResponse(responseCode = "404", description = "Autor não encontrado")
+    @ApiResponse(responseCode = "409",  description = "Conflito: o autor possui livros vinculados e não pode ser excluído")
     @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     public ResponseEntity<Void> deletaAutor(@PathVariable Long id){
         autorService.deletaAutor(id);
