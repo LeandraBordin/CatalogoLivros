@@ -4,7 +4,9 @@ import com.leandra.LivroService.business.AutorService;
 import com.leandra.LivroService.business.dto.Request.AutorRequestDTO;
 import com.leandra.LivroService.business.dto.Response.AutorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/autores")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "401", description = "Não Autorizado: Token ausente, inválido ou expirado", content = @Content),
+        @ApiResponse(responseCode = "403", description = "Proibido: O usuário não tem o cargo necessário", content = @Content)
+})
 @RequiredArgsConstructor
 @Tag(name = "Autor", description = "Endpoints de gerenciamento de Autores")
 public class AutorController {
