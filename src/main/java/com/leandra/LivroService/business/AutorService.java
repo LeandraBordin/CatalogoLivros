@@ -57,7 +57,7 @@ public class AutorService {
                 .orElseThrow(() -> new EntityNotFoundException("Autor não encontrado para o ID: " + id));
 
         if (!autor.getLivros().isEmpty()) {
-            throw new IllegalStateException("Não é possível excluir autor vinculado a livros.");
+            throw new ConflictException("Não é possível excluir autor vinculado a livros.");
         }
 
         autorRepository.delete(autor);
