@@ -46,9 +46,8 @@ public class AutorService {
     public AutorResponseDTO atualizaAutor(Long id, AutorRequestDTO autorRequestDTO){
         Autor autorExistente = autorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Autor não encontrado para o ID: " + id));
-        autorExistente.setNome(autorRequestDTO.getNome());
-        autorExistente.setNacionalidade(autorRequestDTO.getNacionalidade());
-        Autor autorAtualizado = autorRepository.save(autorExistente);
+        Autor autorNovo = autorConverter.updateAutor(autorRequestDTO,autorExistente);
+        Autor autorAtualizado = autorRepository.save(autorNovo);
 
         return autorConverter.paraAutorResponseDTO(autorAtualizado);
     }
