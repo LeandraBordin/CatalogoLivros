@@ -19,13 +19,13 @@ public class Livro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "titulo",length = 25,nullable = false)
+    @Column(name = "titulo",nullable = false)
     private String titulo;
 
     @Column(name = "isbn",length = 13,nullable = false,unique = true)
     private String isbn;
 
-    @Column(name = "descricao", length = 100)
+    @Column(name = "descricao")
     private String descricao;
 
     @Column(name = "editora",length = 25,nullable = false)
@@ -51,6 +51,9 @@ public class Livro {
     @Enumerated(EnumType.STRING)
     private StatusLivro status;
 
+    @Column(length = 500)
+    private String capaUrl;
+
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "livro_autor",
@@ -58,6 +61,5 @@ public class Livro {
             inverseJoinColumns = @JoinColumn(name = "autor_id")
     )
     private List<Autor> autores = new ArrayList<>();
-
 
 }

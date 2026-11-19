@@ -5,7 +5,9 @@
     import com.leandra.LivroService.business.dto.Request.CategoriaRequestDTO;
     import com.leandra.LivroService.business.dto.Response.CategoriaResponseDTO;
     import io.swagger.v3.oas.annotations.Operation;
+    import io.swagger.v3.oas.annotations.media.Content;
     import io.swagger.v3.oas.annotations.responses.ApiResponse;
+    import io.swagger.v3.oas.annotations.responses.ApiResponses;
     import io.swagger.v3.oas.annotations.tags.Tag;
     import lombok.RequiredArgsConstructor;
     import org.springframework.http.HttpStatus;
@@ -16,6 +18,10 @@
 
     @RestController
     @RequestMapping("/categorias")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "401", description = "Não Autorizado: Token ausente, inválido ou expirado", content = @Content),
+            @ApiResponse(responseCode = "403", description = "Proibido: O usuário não tem o cargo necessário", content = @Content)
+    })
     @RequiredArgsConstructor
     @Tag(name = "Categoria", description = "Endpoints de gerenciamento de Categorias")
     public class CategoriaController {
