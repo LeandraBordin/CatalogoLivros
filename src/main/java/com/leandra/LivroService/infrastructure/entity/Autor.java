@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class Autor {
 
     @Id
@@ -27,5 +28,6 @@ public class Autor {
 
     @ManyToMany(mappedBy = "autores")
     @JsonIgnore
+    @Builder.Default
     private List<Livro> livros = new ArrayList<>();
 }

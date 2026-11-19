@@ -14,6 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@EqualsAndHashCode
 public class Livro {
 
     @Id
@@ -40,6 +41,7 @@ public class Livro {
             joinColumns = @JoinColumn(name = "livro_id"),
             inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
+    @Builder.Default
     private List<Categoria> categorias = new ArrayList<>();
 
     @Column(name = "quantidade_total",nullable = false)
@@ -60,6 +62,7 @@ public class Livro {
             joinColumns = @JoinColumn(name = "livro_id"),
             inverseJoinColumns = @JoinColumn(name = "autor_id")
     )
+    @Builder.Default
     private List<Autor> autores = new ArrayList<>();
 
 }
