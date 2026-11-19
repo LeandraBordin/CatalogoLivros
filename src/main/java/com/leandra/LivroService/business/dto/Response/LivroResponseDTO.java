@@ -21,4 +21,5 @@ public class LivroResponseDTO {
     private Integer quantidadeTotal;
     private StatusLivro status;
     private List<AutorResponseDTO> autores;
+    private String capaUrl;
 }

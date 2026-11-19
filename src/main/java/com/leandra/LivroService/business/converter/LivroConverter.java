@@ -44,6 +44,7 @@ public class LivroConverter {
                         .toList())
                 .quantidadeTotal(livro.getQuantidadeTotal())
                 .status(livro.getStatus())
+                .capaUrl(livro.getCapaUrl())
                 .autores(livro.getAutores().stream()
                         .map(autorConverter::paraAutorResponseDTO)
                         .toList())

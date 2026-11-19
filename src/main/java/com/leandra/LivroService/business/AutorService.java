@@ -4,6 +4,7 @@ import com.leandra.LivroService.business.converter.AutorConverter;
 import com.leandra.LivroService.business.dto.Request.AutorRequestDTO;
 import com.leandra.LivroService.business.dto.Response.AutorResponseDTO;
 import com.leandra.LivroService.infrastructure.entity.Autor;
+import com.leandra.LivroService.infrastructure.exceptions.ConflictException;
 import com.leandra.LivroService.infrastructure.repository.AutorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +19,11 @@ public class AutorService {
     private final AutorConverter autorConverter;
 
     public AutorResponseDTO salvarAutor(AutorRequestDTO autorRequestDTO){
-        try{
             if (autorRepository.existsByNome(autorRequestDTO.getNome())){
-                throw new RuntimeException("Autor já cadastrado");
+                throw new ConflictException("Autor já cadastrado");
             }
             Autor autor = autorConverter.paraAutor(autorRequestDTO);
             return autorConverter.paraAutorResponseDTO(autorRepository.save(autor));
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Erro ao cadastrar autor"+e.getMessage());
-        }
     }
 
     public List<AutorResponseDTO> buscaAutorPorNome(String nome){
@@ -60,7 +57,7 @@ public class AutorService {
                 .orElseThrow(() -> new EntityNotFoundException("Autor não encontrado para o ID: " + id));
 
         if (!autor.getLivros().isEmpty()) {
-            throw new IllegalStateException("Não é possível excluir autor vinculado a livros.");
+            throw new ConflictException("Não é possível excluir autor vinculado a livros.");
         }
 
         autorRepository.delete(autor);

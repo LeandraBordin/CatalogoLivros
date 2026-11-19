@@ -6,7 +6,7 @@ import com.leandra.LivroService.business.dto.Response.LivroResponseDTO;
 import com.leandra.LivroService.infrastructure.entity.Autor;
 import com.leandra.LivroService.infrastructure.entity.Categoria;
 import com.leandra.LivroService.infrastructure.entity.Livro;
-import com.leandra.LivroService.infrastructure.exceptions.ResouceNotFoundException;
+import com.leandra.LivroService.infrastructure.exceptions.ResourceNotFoundException;
 import com.leandra.LivroService.infrastructure.repository.AutorRepository;
 import com.leandra.LivroService.infrastructure.repository.CategoriaRepository;
 import com.leandra.LivroService.infrastructure.repository.LivroRepository;
@@ -25,6 +25,7 @@ public class LivroService {
     private final LivroConverter livroConverter;
     private final CategoriaRepository categoriaRepository;
     private final AutorRepository autorRepository;
+    private final CapaService capaService;
 
     public LivroResponseDTO salvaLivro(LivroRequestDTO livroDTO){
         try{
@@ -41,6 +42,7 @@ public class LivroService {
             Livro livro = livroConverter.paraLivro(livroDTO);
             livro.setAutores(autores);
             livro.setCategorias(categorias);
+            capaService.buscarCapa(livroDTO.getIsbn()).ifPresent(livro::setCapaUrl);
             return livroConverter.paraLivroDTO(livroRepository.save(livro));
         } catch (RuntimeException e) {
             throw new RuntimeException("Erro ao salvar livro:"+e.getMessage());
@@ -65,7 +67,10 @@ public class LivroService {
         Livro livro = livroRepository.findByIsbn(isbn)
                 .orElseThrow(() -> new EntityNotFoundException("Livro não encontrado com ISBN: " + isbn));
 
-        if (livroDTO.getIsbn() != null && !livro.getIsbn().equals(livroDTO.getIsbn())) {
+        // Guarda o ISBN antes do update
+        String isbnAntigo = livro.getIsbn();
+
+        if (livroDTO.getIsbn() != null && !isbnAntigo.equals(livroDTO.getIsbn())) {
             if (livroRepository.existsByIsbn(livroDTO.getIsbn())) {
                 throw new RuntimeException("Livro com ISBN " + livroDTO.getIsbn() + " já cadastrado");
             }
@@ -85,22 +90,28 @@ public class LivroService {
             livro.setQuantidadeTotal(livroDTO.getQuantidadeTotal());
         }
 
+        // só consulta a API se o ISBN mudou ou se o livro ainda não tem capa
+        boolean isbnMudou = !isbnAntigo.equals(livro.getIsbn());
+        if (isbnMudou || livro.getCapaUrl() == null) {
+            livro.setCapaUrl(capaService.buscarCapa(livro.getIsbn()).orElse(null));
+        }
+
         Livro livroAtualizado = livroRepository.save(livro);
         return livroConverter.paraLivroDTO(livroAtualizado);
     }
     public void deletaLivroPorId(Long id){
        try{
            livroRepository.deleteById(id);
-       } catch (ResouceNotFoundException e){
-           throw new ResouceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+id+"");
+       } catch (ResourceNotFoundException e){
+           throw new ResourceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+id+"");
        }
     }
     @Transactional
     public void deletaLivroPorIsbn(String isbn){
        try{
            livroRepository.deleteByIsbn(isbn);
-       } catch (ResouceNotFoundException e){
-           throw new ResouceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+isbn+"");
+       } catch (ResourceNotFoundException e){
+           throw new ResourceNotFoundException("Erro ao deletar livro: "+e.getMessage()+" ID: "+isbn+"");
        }
     }
 }
