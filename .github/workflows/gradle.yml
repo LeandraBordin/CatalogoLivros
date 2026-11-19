@@ -1,13 +1,16 @@
 name: PR Workflow
 
 on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
   pull_request:
     branches:
+      - main
       - master
-    types:
-      - opened
-      - synchronize
-      - reopened
+      - develop
 
 jobs:
   build:
