@@ -1,13 +1,14 @@
-package com.leandra.LivroService.api.request;
+package com.leandra.LivroService.api.response;
 
-import com.leandra.LivroService.business.dto.Request.AutorRequestDTO;
 import com.leandra.LivroService.business.dto.Request.CategoriaRequestDTO;
+import com.leandra.LivroService.business.dto.Response.CategoriaResponseDTO;
 
-public class CategoriaRequestDTOFixture {
+public class CategoriaResponseDTOFixture {
 
-    public static CategoriaRequestDTO build(
+    public static CategoriaResponseDTO build(
+            Long id,
             String nome
     ) {
-        return new CategoriaRequestDTO(nome);
+        return new CategoriaResponseDTO(id,nome);
     }
 }

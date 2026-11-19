@@ -1,13 +1,15 @@
-package com.leandra.LivroService.api.request;
+package com.leandra.LivroService.api.response;
 
 import com.leandra.LivroService.business.dto.Request.AutorRequestDTO;
+import com.leandra.LivroService.business.dto.Response.AutorResponseDTO;
 
-public class AutorRequestDTOFixture {
+public class AutorResponseDTOFixture {
 
-    public static AutorRequestDTO build(
+    public static AutorResponseDTO build(
+            Long id,
             String nome,
             String nacionalidade
     ) {
-        return new AutorRequestDTO(nome, nacionalidade);
+        return new AutorResponseDTO(id,nome, nacionalidade);
     }
 }
