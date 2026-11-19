@@ -69,7 +69,18 @@ public class SecurityConfig {
 
                         .anyRequest().denyAll()
                 )
-                .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.setContentType("text/plain;charset=UTF-8");
+                            response.getWriter().write("Usuário não autorizado");
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                            response.setContentType("text/plain;charset=UTF-8");
+                            response.getWriter().write("Acesso negado: permissão insuficiente");
+                        })
+                )
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
