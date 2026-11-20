@@ -23,4 +23,12 @@ public class AutorConverter {
                 .nacionalidade(autorRequestDTO.getNacionalidade())
                 .build();
     }
+
+    public Autor updateAutor(AutorRequestDTO autorRequestDTO, Autor entity) {
+        return Autor.builder()
+                .id(entity.getId())
+                .nome(autorRequestDTO.getNome() != null ? autorRequestDTO.getNome() : entity.getNome())
+                .nacionalidade(autorRequestDTO.getNacionalidade() != null ? autorRequestDTO.getNacionalidade() : entity.getNacionalidade())
+                .build();
+    }
 }
