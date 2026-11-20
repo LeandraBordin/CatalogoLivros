@@ -61,7 +61,7 @@ public class LivroConverter {
                 .anoPublicacao(livroDTO.getAnoPublicacao() != null ? livroDTO.getAnoPublicacao() : entity.getAnoPublicacao())
                 .categorias(entity.getCategorias())
                 .autores(entity.getAutores())
-                .quantidadeTotal(entity.getQuantidadeTotal())
+                .quantidadeTotal(livroDTO.getQuantidadeTotal() != null ? livroDTO.getQuantidadeTotal() : entity.getQuantidadeTotal())
                 .quantidadeDisponivel(entity.getQuantidadeDisponivel())
                 .status(entity.getStatus())
                 .build();
