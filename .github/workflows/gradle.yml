@@ -55,10 +55,4 @@ jobs:
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: postgres
           SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-
-      - name: Upload test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-report
-          path: build/reports/tests/test
+          NOME_DA_VARIAVEL: valor-de-teste
